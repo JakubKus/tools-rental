@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.button1 = new System.Windows.Forms.Button();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.LoanButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -38,33 +39,35 @@
             this.label2 = new System.Windows.Forms.Label();
             this.AddLoanPanel = new System.Windows.Forms.Panel();
             this.LoansPanel = new System.Windows.Forms.Panel();
-            this.LoansGrid = new System.Windows.Forms.DataGridView();
-            this.loanDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Preview = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.Return = new System.Windows.Forms.DataGridViewButtonColumn();
             this.ToolsList = new System.Windows.Forms.DataGridView();
             this.tool = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LoansGrid = new System.Windows.Forms.DataGridView();
+            this.loanDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ToPay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Preview = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Return = new System.Windows.Forms.DataGridViewButtonColumn();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.AddLoanPanel.SuspendLayout();
             this.LoansPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LoansGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ToolsList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LoansGrid)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // LoanButton
             // 
-            this.button1.AutoSize = true;
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.button1.Location = new System.Drawing.Point(15, 10);
-            this.button1.Margin = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.button1.Name = "button1";
-            this.button1.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
-            this.button1.Size = new System.Drawing.Size(178, 44);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Dodaj wypożyczenie";
-            this.button1.UseVisualStyleBackColor = true;
+            this.LoanButton.AutoSize = true;
+            this.LoanButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LoanButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.LoanButton.Location = new System.Drawing.Point(15, 10);
+            this.LoanButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.LoanButton.Name = "LoanButton";
+            this.LoanButton.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.LoanButton.Size = new System.Drawing.Size(178, 44);
+            this.LoanButton.TabIndex = 2;
+            this.LoanButton.Text = "Dodaj wypożyczenie";
+            this.LoanButton.UseVisualStyleBackColor = true;
+            this.LoanButton.Click += new System.EventHandler(this.LoanButton_Click);
             // 
             // label1
             // 
@@ -127,7 +130,7 @@
             // AddLoanPanel
             // 
             this.AddLoanPanel.AutoSize = true;
-            this.AddLoanPanel.Controls.Add(this.button1);
+            this.AddLoanPanel.Controls.Add(this.LoanButton);
             this.AddLoanPanel.Location = new System.Drawing.Point(228, 3);
             this.AddLoanPanel.Name = "AddLoanPanel";
             this.AddLoanPanel.Padding = new System.Windows.Forms.Padding(15, 10, 15, 0);
@@ -143,63 +146,10 @@
             this.LoansPanel.Location = new System.Drawing.Point(442, 3);
             this.LoansPanel.Name = "LoansPanel";
             this.LoansPanel.Padding = new System.Windows.Forms.Padding(15, 10, 15, 0);
-            this.LoansPanel.Size = new System.Drawing.Size(191, 265);
+            this.LoansPanel.Size = new System.Drawing.Size(250, 265);
             this.LoansPanel.TabIndex = 4;
             this.LoansPanel.TabStop = true;
             this.LoansPanel.Visible = false;
-            // 
-            // LoansGrid
-            // 
-            this.LoansGrid.AllowUserToAddRows = false;
-            this.LoansGrid.AllowUserToDeleteRows = false;
-            this.LoansGrid.AllowUserToOrderColumns = true;
-            this.LoansGrid.AllowUserToResizeRows = false;
-            this.LoansGrid.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
-            this.LoansGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.LoansGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.LoansGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.LoansGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.loanDate,
-            this.Preview,
-            this.Return});
-            this.LoansGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.LoansGrid.GridColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.LoansGrid.Location = new System.Drawing.Point(15, 30);
-            this.LoansGrid.MultiSelect = false;
-            this.LoansGrid.Name = "LoansGrid";
-            this.LoansGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.LoansGrid.RowHeadersVisible = false;
-            this.LoansGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.LoansGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.LoansGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.LoansGrid.Size = new System.Drawing.Size(161, 108);
-            this.LoansGrid.TabIndex = 4;
-            this.LoansGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.LoansGrid_CellClick);
-            // 
-            // loanDate
-            // 
-            this.loanDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.loanDate.FillWeight = 159.3909F;
-            this.loanDate.HeaderText = "";
-            this.loanDate.Name = "loanDate";
-            // 
-            // Preview
-            // 
-            this.Preview.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.Preview.HeaderText = "";
-            this.Preview.Name = "Preview";
-            this.Preview.ReadOnly = true;
-            this.Preview.Width = 55;
-            // 
-            // Return
-            // 
-            this.Return.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.Return.FillWeight = 40.60914F;
-            this.Return.HeaderText = "";
-            this.Return.Name = "Return";
-            this.Return.ReadOnly = true;
-            this.Return.Width = 42;
             // 
             // ToolsList
             // 
@@ -224,15 +174,78 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.ToolsList.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.ToolsList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.ToolsList.Size = new System.Drawing.Size(161, 108);
+            this.ToolsList.Size = new System.Drawing.Size(220, 108);
             this.ToolsList.TabIndex = 5;
             // 
             // tool
             // 
             this.tool.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.tool.FillWeight = 159.3909F;
-            this.tool.HeaderText = "";
+            this.tool.HeaderText = "Nazwa narzędzia";
             this.tool.Name = "tool";
+            // 
+            // LoansGrid
+            // 
+            this.LoansGrid.AllowUserToAddRows = false;
+            this.LoansGrid.AllowUserToDeleteRows = false;
+            this.LoansGrid.AllowUserToOrderColumns = true;
+            this.LoansGrid.AllowUserToResizeRows = false;
+            this.LoansGrid.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
+            this.LoansGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.LoansGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.LoansGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.LoansGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.loanDate,
+            this.ToPay,
+            this.Preview,
+            this.Return});
+            this.LoansGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.LoansGrid.GridColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.LoansGrid.Location = new System.Drawing.Point(15, 30);
+            this.LoansGrid.MultiSelect = false;
+            this.LoansGrid.Name = "LoansGrid";
+            this.LoansGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.LoansGrid.RowHeadersVisible = false;
+            this.LoansGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.LoansGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            this.LoansGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.LoansGrid.Size = new System.Drawing.Size(220, 108);
+            this.LoansGrid.TabIndex = 4;
+            this.LoansGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.LoansGrid_CellClick);
+            // 
+            // loanDate
+            // 
+            dataGridViewCellStyle2.Format = "d";
+            dataGridViewCellStyle2.NullValue = null;
+            this.loanDate.DefaultCellStyle = dataGridViewCellStyle2;
+            this.loanDate.FillWeight = 159.3909F;
+            this.loanDate.HeaderText = "Data";
+            this.loanDate.Name = "loanDate";
+            this.loanDate.Width = 60;
+            // 
+            // ToPay
+            // 
+            this.ToPay.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ToPay.HeaderText = "Do zapłaty";
+            this.ToPay.Name = "ToPay";
+            // 
+            // Preview
+            // 
+            this.Preview.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Preview.HeaderText = "";
+            this.Preview.Name = "Preview";
+            this.Preview.ReadOnly = true;
+            this.Preview.Width = 53;
+            // 
+            // Return
+            // 
+            this.Return.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Return.FillWeight = 40.60914F;
+            this.Return.HeaderText = "";
+            this.Return.Name = "Return";
+            this.Return.ReadOnly = true;
+            this.Return.Width = 40;
             // 
             // Form1
             // 
@@ -251,14 +264,14 @@
             this.AddLoanPanel.PerformLayout();
             this.LoansPanel.ResumeLayout(false);
             this.LoansPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LoansGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ToolsList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LoansGrid)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button LoanButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
@@ -267,11 +280,12 @@
         private System.Windows.Forms.ComboBox ClientsList;
         private System.Windows.Forms.Panel LoansPanel;
         private System.Windows.Forms.DataGridView LoansGrid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn loanDate;
-        private System.Windows.Forms.DataGridViewButtonColumn Preview;
-        private System.Windows.Forms.DataGridViewButtonColumn Return;
         private System.Windows.Forms.DataGridView ToolsList;
         private System.Windows.Forms.DataGridViewTextBoxColumn tool;
+        private System.Windows.Forms.DataGridViewTextBoxColumn loanDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ToPay;
+        private System.Windows.Forms.DataGridViewButtonColumn Preview;
+        private System.Windows.Forms.DataGridViewButtonColumn Return;
     }
 }
 

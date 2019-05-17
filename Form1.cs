@@ -100,8 +100,8 @@ namespace toolsRental
             ToolsList.Visible = false;
             string clientID = getSelectedUserID();
 
-            String clientLoansQuery = "SELECT DataWypozyczenia, DataZwrotu FROM Wypozyczenia" +
-            " WHERE IDklienta=" + clientID;
+            String clientLoansQuery = "SELECT dataWypozyczenia, DataZwrotu, IDwypozyczenia," +
+            " Zaliczka FROM Wypozyczenia WHERE IDklienta=" + clientID;
 
             var loansList = executeDbQuery(clientLoansQuery);
             SqlDataReader loansDataReader = loansList.ExecuteReader();
@@ -112,10 +112,19 @@ namespace toolsRental
                 AddLoanPanel.Visible = true;
                 while (loansDataReader.Read())
                 {
+                    String loanDetailsquery = "SELECT SUM(Cena - Cena * Rabat) FROM" +
+                    " PozycjeWypozyczenia JOIN Narzedzia ON PozycjeWypozyczenia.IDnarzedzia =" +
+                    " Narzedzia.IDnarzedzia WHERE IDwypozyczenia = " + loansDataReader.GetValue(2);
+                    var loanDetails = executeDbQuery(loanDetailsquery);
+                    SqlDataReader loanDetailsReader = loanDetails.ExecuteReader();
+                    loanDetailsReader.Read();
+
                     LoansGrid.Rows.Add(
-                        loansDataReader.GetValue(0).ToString(),
-                        loansDataReader.GetValue(1).Equals(null) ? "" : "Podgląd",
-                        loansDataReader.GetValue(1).Equals(null) ? "" : "Zwrot"
+                        Convert.ToDateTime(loansDataReader.GetValue(0)),
+                        (float.Parse(loanDetailsReader.GetValue(0).ToString())
+                        - float.Parse(loansDataReader.GetValue(3).ToString())),
+                        "Podgląd",
+                        DBNull.Value.Equals(loansDataReader.GetValue(1)) ? "Zwrot" : ""
                     );
                 }
             }
@@ -123,12 +132,11 @@ namespace toolsRental
 
         private void LoansGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            //ToolsList.Text = "podgladed";
             if (LoansGrid.SelectedCells[0].Value.ToString() == "Podgląd")
             {
-                ToolsList.Rows.Clear();
                 string clientID = getSelectedUserID();
                 string loanID = getLoanId(int.Parse(clientID));
+                ToolsList.Rows.Clear();
                 String clientLoansQuery = "SELECT NazwaNarzedzia FROM Wypozyczenia AS W" +
                 " JOIN PozycjeWypozyczenia AS P ON W.IDwypozyczenia=P.IDwypozyczenia" +
                 " JOIN Narzedzia AS N ON P.IDnarzedzia=N.IDnarzedzia WHERE IDklienta="
@@ -147,7 +155,21 @@ namespace toolsRental
             }
             if (LoansGrid.SelectedCells[0].Value.ToString() == "Zwrot")
             {
+                string clientID = getSelectedUserID();
+                string loanID = getLoanId(int.Parse(clientID));
+                String returnLoanQuery = "UPDATE Wypozyczenia SET DataZwrotu =" +
+                " CONVERT(date, GETDATE()) WHERE IDwypozyczenia = " + loanID;
+                var returnLoan = executeDbQuery(returnLoanQuery);
+                returnLoan.ExecuteNonQuery();
+                ClientsList_SelectedIndexChanged(sender, e);
             }
+        }
+
+        private void LoanButton_Click(object sender, EventArgs e)
+        {
+            string userID = getSelectedUserID();
+            var addLoanForm = new AddLoanForm(userID);
+            addLoanForm.ShowDialog();
         }
     }
 }
