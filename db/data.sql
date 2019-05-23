@@ -14,13 +14,13 @@ VALUES
 
 INSERT INTO Kategorie (NazwaKategorii)
 VALUES
-	('frezarka'),
-	('lutownica'),
-	('spawarka'),
-	('szlifierka'),
-	('tokarka'),
-	('wiertarka'),
-	('wkretarka')
+	('frezarki'),
+	('lutownice'),
+	('spawarki'),
+	('szlifierki'),
+	('tokarki'),
+	('wiertarki'),
+	('wkretarki')
 
 INSERT INTO Narzedzia (NazwaNarzedzia, IDkategorii, Cena, Dostepnosc) VALUES
 ('frezarka do metalu', 1, 500, 1),
