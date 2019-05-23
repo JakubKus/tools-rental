@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 
@@ -16,160 +9,127 @@ namespace toolsRental
         public Form1()
         {
             InitializeComponent();
+            UpdateClientsList();
         }
-
-        public SqlCommand executeDbQuery(string query)
+        private void UpdateClientsList()
         {
-            String connString = @"Data Source=DESKTOP-2370T16\SQLEXPRESS;Initial" +
-            " Catalog=WypozyczalniaElektronarzedzi;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(query, conn);
-            return cmd;
+            ClientsList.Items.Clear();
+            string clientsQuery = "SELECT Imie, Nazwisko FROM Klienci";
+            var clients = queries.ExecuteQuery(clientsQuery);
+            SqlDataReader clientsReader = clients.ExecuteReader();
+            while (clientsReader.Read())
+                ClientsList.Items.Add(clientsReader.GetValue(0) + " " + clientsReader.GetValue(1));
         }
-
-        public string getSelectedUserID()
-        {
-            string selectedClientIndex = ClientsList.SelectedIndex.ToString();
-            String clientIdQuery = "SELECT TOP " + (int.Parse(selectedClientIndex) + 1) +
-                " IDklienta FROM Klienci EXCEPT SELECT TOP " + selectedClientIndex +
-                " IDklienta FROM Klienci";
-            var clientIdContainer = executeDbQuery(clientIdQuery);
-            SqlDataReader dataReader = clientIdContainer.ExecuteReader();
-            if (dataReader.HasRows)
-            {
-                dataReader.Read();
-                return dataReader.GetValue(0).ToString();
-            }
-            else
-            {
-                String clientIdQuery2 = "SELECT TOP 1 IDklienta FROM Klienci";
-                var clientIdContainer2 = executeDbQuery(clientIdQuery2);
-                SqlDataReader dataReader2 = clientIdContainer2.ExecuteReader();
-                dataReader2.Read();
-                return dataReader2.GetValue(0).ToString();
-            }
-        }
-
-        public string getLoanId(int idFromList)
-        {
-            string clientID = getSelectedUserID();
-            String loanIdQuery = "SELECT TOP " + (idFromList + 1) +
-                " IDwypozyczenia FROM Wypozyczenia WHERE IDklienta=" + clientID + " EXCEPT SELECT" +
-                " TOP " + idFromList + " IDwypozyczenia FROM Wypozyczenia WHERE IDklienta=" + clientID;
-            var loanIdContainer = executeDbQuery(loanIdQuery);
-            SqlDataReader dataReader = loanIdContainer.ExecuteReader();
-            if (dataReader.HasRows)
-            {
-                dataReader.Read();
-                return dataReader.GetValue(0).ToString();
-            }
-            else
-            {
-                String loanIdQuery2 = "SELECT TOP 1 IDwypozyczenia FROM Wypozyczenia where idklienta=" +
-                clientID;
-                var loanIdContainer2 = executeDbQuery(loanIdQuery2);
-                SqlDataReader dataReader2 = loanIdContainer2.ExecuteReader();
-                dataReader2.Read();
-                return dataReader2.GetValue(0).ToString();
-            }
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            String query = "SELECT Imie, Nazwisko FROM Klienci";
-            var users = executeDbQuery(query);
-            SqlDataReader dataReader = users.ExecuteReader();
-
-            while (dataReader.Read())
-            {
-                ClientsList.Items.Add(String.Format("{0} {1}",
-                    dataReader.GetValue(0),
-                    dataReader.GetValue(1)));
-            }
-
-            dataReader.Close();
-            users.Dispose();
-            users.Connection.Close();
-        }
-
+        Queries queries = new Queries();
+        string GetSelectedClientDbId() => queries.GetSelectedClientDbId(ClientsList.SelectedIndex.ToString());
         private void ClientsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoansGrid.Rows.Clear();
             ToolsList.Rows.Clear();
             ToolsList.Visible = false;
-            string clientID = getSelectedUserID();
+            AddLoanPanel.Enabled = true;
+            LoanButton.Enabled = true;
+            string clientId = GetSelectedClientDbId();
+            string clientLoansQuery = "SELECT dataWypozyczenia, DataZwrotu, IDwypozyczenia," +
+            " Zaliczka FROM Wypozyczenia WHERE IDklienta = " + clientId;
 
-            String clientLoansQuery = "SELECT dataWypozyczenia, DataZwrotu, IDwypozyczenia," +
-            " Zaliczka FROM Wypozyczenia WHERE IDklienta=" + clientID;
+            var loansList = queries.ExecuteQuery(clientLoansQuery);
+            SqlDataReader loansReader = loansList.ExecuteReader();
 
-            var loansList = executeDbQuery(clientLoansQuery);
-            SqlDataReader loansDataReader = loansList.ExecuteReader();
-
-            if (loansDataReader.HasRows)
+            if (loansReader.HasRows)
             {
-                LoansPanel.Visible = true;
-                AddLoanPanel.Visible = true;
-                while (loansDataReader.Read())
+                LoansGrid.Enabled = true;
+                while (loansReader.Read())
                 {
                     String loanDetailsquery = "SELECT SUM(Cena - Cena * Rabat) FROM" +
                     " PozycjeWypozyczenia JOIN Narzedzia ON PozycjeWypozyczenia.IDnarzedzia =" +
-                    " Narzedzia.IDnarzedzia WHERE IDwypozyczenia = " + loansDataReader.GetValue(2);
-                    var loanDetails = executeDbQuery(loanDetailsquery);
+                    " Narzedzia.IDnarzedzia WHERE IDwypozyczenia = " + loansReader.GetValue(2);
+                    var loanDetails = queries.ExecuteQuery(loanDetailsquery);
                     SqlDataReader loanDetailsReader = loanDetails.ExecuteReader();
                     loanDetailsReader.Read();
 
                     LoansGrid.Rows.Add(
-                        Convert.ToDateTime(loansDataReader.GetValue(0)),
-                        (float.Parse(loanDetailsReader.GetValue(0).ToString())
-                        - float.Parse(loansDataReader.GetValue(3).ToString())),
+                        Convert.ToDateTime(loansReader.GetValue(0)),
+                        (double.Parse(loanDetailsReader.GetValue(0).ToString())
+                        - double.Parse(loansReader.GetValue(3).ToString())),
                         "Podgląd",
-                        DBNull.Value.Equals(loansDataReader.GetValue(1)) ? "Zwrot" : ""
+                        DBNull.Value.Equals(loansReader.GetValue(1)) ? "Zwrot" : ""
                     );
                 }
             }
+            else
+                LoansGrid.Enabled = false;
         }
-
         private void LoansGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (LoansGrid.SelectedCells[0].Value.ToString() == "Podgląd")
+            if (LoansGrid.SelectedCells[0].Value.ToString() == "Podgląd" ||
+                LoansGrid.SelectedCells[0].Value.ToString() == "Zwrot")
             {
-                string clientID = getSelectedUserID();
-                string loanID = getLoanId(int.Parse(clientID));
-                ToolsList.Rows.Clear();
-                String clientLoansQuery = "SELECT NazwaNarzedzia FROM Wypozyczenia AS W" +
-                " JOIN PozycjeWypozyczenia AS P ON W.IDwypozyczenia=P.IDwypozyczenia" +
-                " JOIN Narzedzia AS N ON P.IDnarzedzia=N.IDnarzedzia WHERE IDklienta="
-                + clientID + " AND W.IDwypozyczenia=" + loanID;
+                string clientId = GetSelectedClientDbId();
+                string selectedLoanId = LoansGrid.SelectedCells[0].RowIndex.ToString();
+                string loanId = queries.GetLoanDbId(selectedLoanId, clientId);
 
-                var loanDetailsList = executeDbQuery(clientLoansQuery);
-                SqlDataReader loansDataReader = loanDetailsList.ExecuteReader();
-                if (loansDataReader.HasRows)
+                if (LoansGrid.SelectedCells[0].Value.ToString() == "Podgląd")
                 {
-                    ToolsList.Visible = true;
-                    while (loansDataReader.Read())
+                    ToolsList.Rows.Clear();
+                    String clientLoansQuery = "SELECT NazwaNarzedzia FROM Wypozyczenia AS W" +
+                    " JOIN PozycjeWypozyczenia AS P ON W.IDwypozyczenia=P.IDwypozyczenia" +
+                    " JOIN Narzedzia AS N ON P.IDnarzedzia=N.IDnarzedzia WHERE IDklienta="
+                    + clientId + " AND W.IDwypozyczenia=" + loanId;
+
+                    var loanDetailsList = queries.ExecuteQuery(clientLoansQuery);
+                    SqlDataReader loansReader = loanDetailsList.ExecuteReader();
+                    if (loansReader.HasRows)
                     {
-                        ToolsList.Rows.Add(loansDataReader.GetValue(0).ToString());
+                        ToolsList.Visible = true;
+                        while (loansReader.Read())
+                        {
+                            ToolsList.Rows.Add(loansReader.GetValue(0).ToString());
+                        }
                     }
                 }
-            }
-            if (LoansGrid.SelectedCells[0].Value.ToString() == "Zwrot")
-            {
-                string clientID = getSelectedUserID();
-                string loanID = getLoanId(int.Parse(clientID));
-                String returnLoanQuery = "UPDATE Wypozyczenia SET DataZwrotu =" +
-                " CONVERT(date, GETDATE()) WHERE IDwypozyczenia = " + loanID;
-                var returnLoan = executeDbQuery(returnLoanQuery);
-                returnLoan.ExecuteNonQuery();
-                ClientsList_SelectedIndexChanged(sender, e);
+                if (LoansGrid.SelectedCells[0].Value.ToString() == "Zwrot")
+                {
+                    String returnLoanQuery = "UPDATE Wypozyczenia SET DataZwrotu =" +
+                    " CONVERT(date, GETDATE()) WHERE IDwypozyczenia = " + loanId;
+                    var returnLoan = queries.ExecuteQuery(returnLoanQuery);
+                    returnLoan.ExecuteNonQuery();
+                    ClientsList_SelectedIndexChanged(sender, e);
+                }
             }
         }
-
         private void LoanButton_Click(object sender, EventArgs e)
         {
-            string userID = getSelectedUserID();
-            var addLoanForm = new AddLoanForm(userID);
+            var addLoanForm = new AddLoanForm(GetSelectedClientDbId());
             addLoanForm.ShowDialog();
+        }
+        private void AddClientButton_Click(object sender, EventArgs e)
+        {
+            var addClientForm = new AddClientForm();
+            addClientForm.ShowDialog();
+            UpdateClientsList();
+        }
+        private void RemoveClientButton_Click(object sender, EventArgs e)
+        {
+            string clientId = GetSelectedClientDbId();
+            string removeClientLoansQuery = "DELETE FROM PozycjeWypozyczenia WHERE" +
+            " IDwypozyczenia IN (SELECT IDwypozyczenia FROM wypozyczenia WHERE IDklienta =" +
+            clientId + ")";
+
+            string removeClientQuery = "DELETE FROM Wypozyczenia WHERE IDklienta =" +
+            clientId + " DELETE FROM Klienci WHERE IDklienta = " + clientId;
+
+            var removeClientLoans = queries.ExecuteQuery(removeClientLoansQuery);
+            removeClientLoans.ExecuteNonQuery();
+
+            var removeClient = queries.ExecuteQuery(removeClientQuery);
+            removeClient.ExecuteNonQuery();
+
+            UpdateClientsList();
+            LoansGrid.Rows.Clear();
+            ToolsList.Rows.Clear();
+            LoansGrid.Enabled = false;
+            ToolsList.Visible = false;
         }
     }
 }
