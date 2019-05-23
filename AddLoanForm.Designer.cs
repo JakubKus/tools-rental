@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.CategoriesList = new System.Windows.Forms.ComboBox();
@@ -41,9 +41,9 @@
             this.ToolsList = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.CartPanel = new System.Windows.Forms.Panel();
-            this.DiscountSum = new System.Windows.Forms.TextBox();
-            this.PriceSum = new System.Windows.Forms.TextBox();
+            this.DiscountSum = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.PriceSum = new System.Windows.Forms.Label();
             this.LoanButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -55,6 +55,7 @@
             this.Discount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Return = new System.Windows.Forms.DataGridViewButtonColumn();
             this.ToolsError = new System.Windows.Forms.ErrorProvider(this.components);
+            this.CartError = new System.Windows.Forms.ErrorProvider(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.ToolsListPanel.SuspendLayout();
@@ -62,6 +63,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AdvanceAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Cart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ToolsError)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CartError)).BeginInit();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -118,10 +120,10 @@
             this.ToolsListPanel.Padding = new System.Windows.Forms.Padding(15, 10, 15, 0);
             this.ToolsListPanel.Size = new System.Drawing.Size(219, 97);
             this.ToolsListPanel.TabIndex = 2;
-            this.ToolsListPanel.Visible = false;
             // 
             // AddToCartButton
             // 
+            this.AddToCartButton.Enabled = false;
             this.AddToCartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.AddToCartButton.Location = new System.Drawing.Point(15, 60);
             this.AddToCartButton.Name = "AddToCartButton";
@@ -129,13 +131,13 @@
             this.AddToCartButton.TabIndex = 2;
             this.AddToCartButton.Text = "Dodaj do koszyka";
             this.AddToCartButton.UseVisualStyleBackColor = true;
-            this.AddToCartButton.Visible = false;
             this.AddToCartButton.Click += new System.EventHandler(this.AddToCartButton_Click);
             // 
             // ToolsList
             // 
             this.ToolsList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ToolsList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ToolsList.Enabled = false;
             this.ToolsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.ToolsList.FormattingEnabled = true;
             this.ToolsList.Location = new System.Drawing.Point(15, 30);
@@ -158,8 +160,8 @@
             // CartPanel
             // 
             this.CartPanel.Controls.Add(this.DiscountSum);
-            this.CartPanel.Controls.Add(this.PriceSum);
             this.CartPanel.Controls.Add(this.label6);
+            this.CartPanel.Controls.Add(this.PriceSum);
             this.CartPanel.Controls.Add(this.LoanButton);
             this.CartPanel.Controls.Add(this.label5);
             this.CartPanel.Controls.Add(this.label4);
@@ -171,23 +173,15 @@
             this.CartPanel.Padding = new System.Windows.Forms.Padding(15, 10, 15, 0);
             this.CartPanel.Size = new System.Drawing.Size(300, 243);
             this.CartPanel.TabIndex = 3;
-            this.CartPanel.Visible = false;
             // 
             // DiscountSum
             // 
+            this.DiscountSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.DiscountSum.Location = new System.Drawing.Point(198, 171);
             this.DiscountSum.Name = "DiscountSum";
-            this.DiscountSum.ReadOnly = true;
             this.DiscountSum.Size = new System.Drawing.Size(52, 20);
-            this.DiscountSum.TabIndex = 13;
-            // 
-            // PriceSum
-            // 
-            this.PriceSum.Location = new System.Drawing.Point(147, 171);
-            this.PriceSum.Name = "PriceSum";
-            this.PriceSum.ReadOnly = true;
-            this.PriceSum.Size = new System.Drawing.Size(50, 20);
-            this.PriceSum.TabIndex = 12;
+            this.DiscountSum.TabIndex = 14;
+            this.DiscountSum.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label6
             // 
@@ -199,8 +193,18 @@
             this.label6.TabIndex = 11;
             this.label6.Text = "Suma:";
             // 
+            // PriceSum
+            // 
+            this.PriceSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.PriceSum.Location = new System.Drawing.Point(147, 171);
+            this.PriceSum.Name = "PriceSum";
+            this.PriceSum.Size = new System.Drawing.Size(50, 20);
+            this.PriceSum.TabIndex = 5;
+            this.PriceSum.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // LoanButton
             // 
+            this.LoanButton.Enabled = false;
             this.LoanButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.LoanButton.Location = new System.Drawing.Point(15, 205);
             this.LoanButton.Name = "LoanButton";
@@ -208,7 +212,6 @@
             this.LoanButton.TabIndex = 10;
             this.LoanButton.Text = "Wypożycz";
             this.LoanButton.UseVisualStyleBackColor = true;
-            this.LoanButton.Visible = false;
             this.LoanButton.Click += new System.EventHandler(this.LoanButton_Click);
             // 
             // label5
@@ -272,6 +275,7 @@
             this.Price,
             this.Discount,
             this.Return});
+            this.Cart.Enabled = false;
             this.Cart.GridColor = System.Drawing.SystemColors.ControlDarkDark;
             this.Cart.Location = new System.Drawing.Point(15, 60);
             this.Cart.MultiSelect = false;
@@ -279,8 +283,8 @@
             this.Cart.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.Cart.RowHeadersVisible = false;
             this.Cart.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.Cart.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.Cart.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.Cart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.Cart.Size = new System.Drawing.Size(270, 108);
             this.Cart.TabIndex = 5;
@@ -294,25 +298,28 @@
             this.loanDate.HeaderText = "Nazwa";
             this.loanDate.Name = "loanDate";
             this.loanDate.ReadOnly = true;
+            this.loanDate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // Price
             // 
-            dataGridViewCellStyle10.Format = "N2";
-            dataGridViewCellStyle10.NullValue = null;
-            this.Price.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle1.Format = "N2";
+            dataGridViewCellStyle1.NullValue = null;
+            this.Price.DefaultCellStyle = dataGridViewCellStyle1;
             this.Price.HeaderText = "Cena(zł)";
             this.Price.Name = "Price";
             this.Price.ReadOnly = true;
+            this.Price.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Price.Width = 50;
             // 
             // Discount
             // 
-            dataGridViewCellStyle11.Format = "N0";
-            dataGridViewCellStyle11.NullValue = "0";
-            this.Discount.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle2.Format = "N0";
+            dataGridViewCellStyle2.NullValue = "0";
+            this.Discount.DefaultCellStyle = dataGridViewCellStyle2;
             this.Discount.HeaderText = "Rabat(%)";
             this.Discount.MaxInputLength = 2;
             this.Discount.Name = "Discount";
+            this.Discount.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Discount.Width = 53;
             // 
             // Return
@@ -329,6 +336,10 @@
             // 
             this.ToolsError.ContainerControl = this;
             // 
+            // CartError
+            // 
+            this.CartError.ContainerControl = this;
+            // 
             // AddLoanForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,7 +347,6 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "AddLoanForm";
-            this.Text = "AddLoanForm";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -347,6 +357,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AdvanceAmount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Cart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ToolsError)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CartError)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -368,13 +379,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button LoanButton;
-        private System.Windows.Forms.TextBox DiscountSum;
-        private System.Windows.Forms.TextBox PriceSum;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ErrorProvider ToolsError;
+        private System.Windows.Forms.ErrorProvider CartError;
         private System.Windows.Forms.DataGridViewTextBoxColumn loanDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn Price;
         private System.Windows.Forms.DataGridViewTextBoxColumn Discount;
         private System.Windows.Forms.DataGridViewButtonColumn Return;
+        private System.Windows.Forms.Label PriceSum;
+        private System.Windows.Forms.Label DiscountSum;
     }
 }
