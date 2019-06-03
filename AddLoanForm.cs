@@ -188,17 +188,14 @@ namespace toolsRental
                     var toolsIds = queries.ExecuteQuery(toolsIdsQuery);
                     SqlDataReader toolsIdsReader = toolsIds.ExecuteReader();
 
-                    for (int i = 0; i < tool.Value; i++)
+                    foreach (DataGridViewRow row in Cart.Rows)
                     {
-                        foreach (DataGridViewRow row in Cart.Rows)
+                        if (row.Cells[0].Value.ToString() == tool.Key)
                         {
-                            if (row.Cells[0].Value.ToString() == tool.Key)
-                            {
-                                toolsIdsReader.Read();
-                                double discountValue = double.Parse(row.Cells[2].Value.ToString()) / 100;
-                                loanNodeValues.Append("(" + loanID + ", " + toolsIdsReader.GetValue(0)
-                                + ", " + discountValue + "),");
-                            }
+                            toolsIdsReader.Read();
+                            double discountValue = double.Parse(row.Cells[2].Value.ToString()) / 100;
+                            loanNodeValues.Append("(" + loanID + ", " + toolsIdsReader.GetValue(0)
+                            + ", " + discountValue + "),");
                         }
                     }
                 }

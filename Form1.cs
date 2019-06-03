@@ -29,8 +29,9 @@ namespace toolsRental
             ToolsList.Visible = false;
             AddLoanPanel.Enabled = true;
             LoanButton.Enabled = true;
+            RemoveClientButton.Enabled = true;
             string clientId = GetSelectedClientDbId();
-            string clientLoansQuery = "SELECT dataWypozyczenia, DataZwrotu, IDwypozyczenia," +
+            string clientLoansQuery = "SELECT DataWypozyczenia, DataZwrotu, IDwypozyczenia," +
             " Zaliczka FROM Wypozyczenia WHERE IDklienta = " + clientId;
 
             var loansList = queries.ExecuteQuery(clientLoansQuery);
@@ -41,7 +42,7 @@ namespace toolsRental
                 LoansGrid.Enabled = true;
                 while (loansReader.Read())
                 {
-                    String loanDetailsquery = "SELECT SUM(Cena - Cena * Rabat) FROM" +
+                    string loanDetailsquery = "SELECT SUM(Cena - Cena * Rabat) FROM" +
                     " PozycjeWypozyczenia JOIN Narzedzia ON PozycjeWypozyczenia.IDnarzedzia =" +
                     " Narzedzia.IDnarzedzia WHERE IDwypozyczenia = " + loansReader.GetValue(2);
                     var loanDetails = queries.ExecuteQuery(loanDetailsquery);
@@ -51,7 +52,7 @@ namespace toolsRental
                     LoansGrid.Rows.Add(
                         Convert.ToDateTime(loansReader.GetValue(0)),
                         (double.Parse(loanDetailsReader.GetValue(0).ToString())
-                        - double.Parse(loansReader.GetValue(3).ToString())),
+                        - double.Parse(loansReader.GetValue(3).ToString())).ToString(),
                         "Podgląd",
                         DBNull.Value.Equals(loansReader.GetValue(1)) ? "Zwrot" : ""
                     );
@@ -129,6 +130,7 @@ namespace toolsRental
             LoansGrid.Rows.Clear();
             ToolsList.Rows.Clear();
             LoansGrid.Enabled = false;
+            RemoveClientButton.Enabled = false;
             ToolsList.Visible = false;
         }
     }
