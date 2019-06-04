@@ -15,8 +15,8 @@ namespace toolsRental
         {
             return FirstNameBox.Text.Length > 2
                 && LastNameBox.Text.Length > 2
-                && Regex.IsMatch(FirstNameBox.Text, @"^[a-zA-Z]+$")
-                && Regex.IsMatch(LastNameBox.Text, @"^[a-zA-Z]+$");
+                && Regex.IsMatch(FirstNameBox.Text, @"^[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]+$")
+                && Regex.IsMatch(LastNameBox.Text, @"^[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]+$");
 
         }
         private void FirstNameBox_TextChanged(object sender, EventArgs e)
