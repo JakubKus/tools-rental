@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RentalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Kategorie">
+          <Key>
+            <PropertyRef Name="IDkategorii" />
+          </Key>
+          <Property Name="IDkategorii" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NazwaKategorii" Type="nvarchar" MaxLength="25" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Klienci">
+          <Key>
+            <PropertyRef Name="IDklienta" />
+          </Key>
+          <Property Name="IDklienta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Imie" Type="nvarchar" MaxLength="25" Nullable="false" />
+          <Property Name="Nazwisko" Type="nvarchar" MaxLength="25" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Narzedzia">
+          <Key>
+            <PropertyRef Name="IDnarzedzia" />
+          </Key>
+          <Property Name="IDnarzedzia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDkategorii" Type="int" Nullable="false" />
+          <Property Name="NazwaNarzedzia" Type="nvarchar" MaxLength="40" Nullable="false" />
+          <Property Name="Dostepnosc" Type="bit" Nullable="false" />
+          <Property Name="Cena" Type="float" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'WypozyczalniaElektronarzedzi.dbo.PozycjeWypozyczenia' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PozycjeWypozyczenia">
+          <Key>
+            <PropertyRef Name="IDwypozyczenia" />
+            <PropertyRef Name="IDnarzedzia" />
+            <PropertyRef Name="Rabat" />
+          </Key>
+          <Property Name="IDwypozyczenia" Type="int" Nullable="false" />
+          <Property Name="IDnarzedzia" Type="int" Nullable="false" />
+          <Property Name="Rabat" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Wypozyczenia">
+          <Key>
+            <PropertyRef Name="IDwypozyczenia" />
+          </Key>
+          <Property Name="IDwypozyczenia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDklienta" Type="int" Nullable="false" />
+          <Property Name="DataWypozyczenia" Type="date" Nullable="false" />
+          <Property Name="DataZwrotu" Type="date" />
+          <Property Name="Zaliczka" Type="float" />
+        </EntityType>
+        <Association Name="FK_Narzedzia_Kategorie">
+          <End Role="Kategorie" Type="Self.Kategorie" Multiplicity="1" />
+          <End Role="Narzedzia" Type="Self.Narzedzia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategorie">
+              <PropertyRef Name="IDkategorii" />
+            </Principal>
+            <Dependent Role="Narzedzia">
+              <PropertyRef Name="IDkategorii" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PozycjeWypozyczenia_Narzedzia">
+          <End Role="Narzedzia" Type="Self.Narzedzia" Multiplicity="1" />
+          <End Role="PozycjeWypozyczenia" Type="Self.PozycjeWypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Narzedzia">
+              <PropertyRef Name="IDnarzedzia" />
+            </Principal>
+            <Dependent Role="PozycjeWypozyczenia">
+              <PropertyRef Name="IDnarzedzia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PozycjeWypozyczenia_Wypozyczenia">
+          <End Role="Wypozyczenia" Type="Self.Wypozyczenia" Multiplicity="1" />
+          <End Role="PozycjeWypozyczenia" Type="Self.PozycjeWypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wypozyczenia">
+              <PropertyRef Name="IDwypozyczenia" />
+            </Principal>
+            <Dependent Role="PozycjeWypozyczenia">
+              <PropertyRef Name="IDwypozyczenia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Wypozyczenia_Klienci">
+          <End Role="Klienci" Type="Self.Klienci" Multiplicity="1" />
+          <End Role="Wypozyczenia" Type="Self.Wypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Klienci">
+              <PropertyRef Name="IDklienta" />
+            </Principal>
+            <Dependent Role="Wypozyczenia">
+              <PropertyRef Name="IDklienta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RentalModelStoreContainer">
+          <EntitySet Name="Kategorie" EntityType="Self.Kategorie" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Klienci" EntityType="Self.Klienci" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Narzedzia" EntityType="Self.Narzedzia" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Wypozyczenia" EntityType="Self.Wypozyczenia" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PozycjeWypozyczenia" EntityType="Self.PozycjeWypozyczenia" store:Type="Tables" Schema="dbo">
+          </EntitySet>
+          <AssociationSet Name="FK_Narzedzia_Kategorie" Association="Self.FK_Narzedzia_Kategorie">
+            <End Role="Kategorie" EntitySet="Kategorie" />
+            <End Role="Narzedzia" EntitySet="Narzedzia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PozycjeWypozyczenia_Narzedzia" Association="Self.FK_PozycjeWypozyczenia_Narzedzia">
+            <End Role="Narzedzia" EntitySet="Narzedzia" />
+            <End Role="PozycjeWypozyczenia" EntitySet="PozycjeWypozyczenia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PozycjeWypozyczenia_Wypozyczenia" Association="Self.FK_PozycjeWypozyczenia_Wypozyczenia">
+            <End Role="Wypozyczenia" EntitySet="Wypozyczenia" />
+            <End Role="PozycjeWypozyczenia" EntitySet="PozycjeWypozyczenia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Wypozyczenia_Klienci" Association="Self.FK_Wypozyczenia_Klienci">
+            <End Role="Klienci" EntitySet="Klienci" />
+            <End Role="Wypozyczenia" EntitySet="Wypozyczenia" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RentalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Kategorie">
+          <Key>
+            <PropertyRef Name="IDkategorii" />
+          </Key>
+          <Property Name="IDkategorii" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NazwaKategorii" Type="String" MaxLength="25" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Narzedzia" Relationship="Self.FK_Narzedzia_Kategorie" FromRole="Kategorie" ToRole="Narzedzia" />
+        </EntityType>
+        <EntityType Name="Klienci">
+          <Key>
+            <PropertyRef Name="IDklienta" />
+          </Key>
+          <Property Name="IDklienta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Imie" Type="String" MaxLength="25" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nazwisko" Type="String" MaxLength="25" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Wypozyczenia" Relationship="Self.FK_Wypozyczenia_Klienci" FromRole="Klienci" ToRole="Wypozyczenia" />
+        </EntityType>
+        <EntityType Name="Narzedzia">
+          <Key>
+            <PropertyRef Name="IDnarzedzia" />
+          </Key>
+          <Property Name="IDnarzedzia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDkategorii" Type="Int32" Nullable="false" />
+          <Property Name="NazwaNarzedzia" Type="String" MaxLength="40" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Dostepnosc" Type="Boolean" Nullable="false" />
+          <Property Name="Cena" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Kategorie" Relationship="Self.FK_Narzedzia_Kategorie" FromRole="Narzedzia" ToRole="Kategorie" />
+          <NavigationProperty Name="PozycjeWypozyczenia" Relationship="Self.FK_PozycjeWypozyczenia_Narzedzia" FromRole="Narzedzia" ToRole="PozycjeWypozyczenia" />
+        </EntityType>
+        <EntityType Name="Wypozyczenia">
+          <Key>
+            <PropertyRef Name="IDwypozyczenia" />
+          </Key>
+          <Property Name="IDwypozyczenia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDklienta" Type="Int32" Nullable="false" />
+          <Property Name="DataWypozyczenia" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DataZwrotu" Type="DateTime" Precision="0" />
+          <Property Name="Zaliczka" Type="Double" />
+          <NavigationProperty Name="Klienci" Relationship="Self.FK_Wypozyczenia_Klienci" FromRole="Wypozyczenia" ToRole="Klienci" />
+          <NavigationProperty Name="PozycjeWypozyczenia" Relationship="Self.FK_PozycjeWypozyczenia_Wypozyczenia" FromRole="Wypozyczenia" ToRole="PozycjeWypozyczenia" />
+        </EntityType>
+        <EntityType Name="PozycjeWypozyczenia">
+          <Key>
+            <PropertyRef Name="IDwypozyczenia" />
+            <PropertyRef Name="IDnarzedzia" />
+            <PropertyRef Name="Rabat" />
+          </Key>
+          <Property Name="IDwypozyczenia" Type="Int32" Nullable="false" />
+          <Property Name="IDnarzedzia" Type="Int32" Nullable="false" />
+          <Property Name="Rabat" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Narzedzia" Relationship="Self.FK_PozycjeWypozyczenia_Narzedzia" FromRole="PozycjeWypozyczenia" ToRole="Narzedzia" />
+          <NavigationProperty Name="Wypozyczenia" Relationship="Self.FK_PozycjeWypozyczenia_Wypozyczenia" FromRole="PozycjeWypozyczenia" ToRole="Wypozyczenia" />
+        </EntityType>
+        <Association Name="FK_Narzedzia_Kategorie">
+          <End Role="Kategorie" Type="Self.Kategorie" Multiplicity="1" />
+          <End Role="Narzedzia" Type="Self.Narzedzia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategorie">
+              <PropertyRef Name="IDkategorii" />
+            </Principal>
+            <Dependent Role="Narzedzia">
+              <PropertyRef Name="IDkategorii" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Wypozyczenia_Klienci">
+          <End Role="Klienci" Type="Self.Klienci" Multiplicity="1" />
+          <End Role="Wypozyczenia" Type="Self.Wypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Klienci">
+              <PropertyRef Name="IDklienta" />
+            </Principal>
+            <Dependent Role="Wypozyczenia">
+              <PropertyRef Name="IDklienta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PozycjeWypozyczenia_Narzedzia">
+          <End Role="Narzedzia" Type="Self.Narzedzia" Multiplicity="1" />
+          <End Role="PozycjeWypozyczenia" Type="Self.PozycjeWypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Narzedzia">
+              <PropertyRef Name="IDnarzedzia" />
+            </Principal>
+            <Dependent Role="PozycjeWypozyczenia">
+              <PropertyRef Name="IDnarzedzia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PozycjeWypozyczenia_Wypozyczenia">
+          <End Role="Wypozyczenia" Type="Self.Wypozyczenia" Multiplicity="1" />
+          <End Role="PozycjeWypozyczenia" Type="Self.PozycjeWypozyczenia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wypozyczenia">
+              <PropertyRef Name="IDwypozyczenia" />
+            </Principal>
+            <Dependent Role="PozycjeWypozyczenia">
+              <PropertyRef Name="IDwypozyczenia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RentalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Kategorie" EntityType="Self.Kategorie" />
+          <EntitySet Name="Klienci" EntityType="Self.Klienci" />
+          <EntitySet Name="Narzedzia" EntityType="Self.Narzedzia" />
+          <EntitySet Name="Wypozyczenia" EntityType="Self.Wypozyczenia" />
+          <EntitySet Name="PozycjeWypozyczenia" EntityType="Self.PozycjeWypozyczenia" />
+          <AssociationSet Name="FK_Narzedzia_Kategorie" Association="Self.FK_Narzedzia_Kategorie">
+            <End Role="Kategorie" EntitySet="Kategorie" />
+            <End Role="Narzedzia" EntitySet="Narzedzia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Wypozyczenia_Klienci" Association="Self.FK_Wypozyczenia_Klienci">
+            <End Role="Klienci" EntitySet="Klienci" />
+            <End Role="Wypozyczenia" EntitySet="Wypozyczenia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PozycjeWypozyczenia_Narzedzia" Association="Self.FK_PozycjeWypozyczenia_Narzedzia">
+            <End Role="Narzedzia" EntitySet="Narzedzia" />
+            <End Role="PozycjeWypozyczenia" EntitySet="PozycjeWypozyczenia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PozycjeWypozyczenia_Wypozyczenia" Association="Self.FK_PozycjeWypozyczenia_Wypozyczenia">
+            <End Role="Wypozyczenia" EntitySet="Wypozyczenia" />
+            <End Role="PozycjeWypozyczenia" EntitySet="PozycjeWypozyczenia" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RentalModelStoreContainer" CdmEntityContainer="RentalEntities">
+          <EntitySetMapping Name="Kategorie">
+            <EntityTypeMapping TypeName="RentalModel.Kategorie">
+              <MappingFragment StoreEntitySet="Kategorie">
+                <ScalarProperty Name="IDkategorii" ColumnName="IDkategorii" />
+                <ScalarProperty Name="NazwaKategorii" ColumnName="NazwaKategorii" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Klienci">
+            <EntityTypeMapping TypeName="RentalModel.Klienci">
+              <MappingFragment StoreEntitySet="Klienci">
+                <ScalarProperty Name="IDklienta" ColumnName="IDklienta" />
+                <ScalarProperty Name="Imie" ColumnName="Imie" />
+                <ScalarProperty Name="Nazwisko" ColumnName="Nazwisko" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Narzedzia">
+            <EntityTypeMapping TypeName="RentalModel.Narzedzia">
+              <MappingFragment StoreEntitySet="Narzedzia">
+                <ScalarProperty Name="IDnarzedzia" ColumnName="IDnarzedzia" />
+                <ScalarProperty Name="IDkategorii" ColumnName="IDkategorii" />
+                <ScalarProperty Name="NazwaNarzedzia" ColumnName="NazwaNarzedzia" />
+                <ScalarProperty Name="Dostepnosc" ColumnName="Dostepnosc" />
+                <ScalarProperty Name="Cena" ColumnName="Cena" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Wypozyczenia">
+            <EntityTypeMapping TypeName="RentalModel.Wypozyczenia">
+              <MappingFragment StoreEntitySet="Wypozyczenia">
+                <ScalarProperty Name="IDwypozyczenia" ColumnName="IDwypozyczenia" />
+                <ScalarProperty Name="IDklienta" ColumnName="IDklienta" />
+                <ScalarProperty Name="DataWypozyczenia" ColumnName="DataWypozyczenia" />
+                <ScalarProperty Name="DataZwrotu" ColumnName="DataZwrotu" />
+                <ScalarProperty Name="Zaliczka" ColumnName="Zaliczka" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PozycjeWypozyczenia">
+            <EntityTypeMapping TypeName="RentalModel.PozycjeWypozyczenia">
+              <MappingFragment StoreEntitySet="PozycjeWypozyczenia">
+                <ScalarProperty Name="IDwypozyczenia" ColumnName="IDwypozyczenia" />
+                <ScalarProperty Name="IDnarzedzia" ColumnName="IDnarzedzia" />
+                <ScalarProperty Name="Rabat" ColumnName="Rabat" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

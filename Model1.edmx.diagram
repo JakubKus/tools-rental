@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6f421854047448ffa0466cf5408f9bec" Name="Diagram1">
+        <EntityTypeShape EntityType="RentalModel.Kategorie" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RentalModel.Klienci" Width="1.5" PointX="0.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RentalModel.Narzedzia" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="RentalModel.Wypozyczenia" Width="1.5" PointX="3" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RentalModel.PozycjeWypozyczenia" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <AssociationConnector Association="RentalModel.FK_Narzedzia_Kategorie" ManuallyRouted="false" />
+        <AssociationConnector Association="RentalModel.FK_Wypozyczenia_Klienci" ManuallyRouted="false" />
+        <AssociationConnector Association="RentalModel.FK_PozycjeWypozyczenia_Narzedzia" ManuallyRouted="false" />
+        <AssociationConnector Association="RentalModel.FK_PozycjeWypozyczenia_Wypozyczenia" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
