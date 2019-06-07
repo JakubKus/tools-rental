@@ -1,43 +1,52 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace toolsRental
 {
     public partial class AddLoanForm : Form
     {
-        private string selectedUserId;
-        public AddLoanForm(string _selectedUserId)
+        private int selectedUserId;
+        public AddLoanForm(int _selectedUserId)
         {
             InitializeComponent();
             selectedUserId = _selectedUserId;
-            String categoriesQuery = "SELECT NazwaKategorii FROM Kategorie";
-            var categories = queries.ExecuteQuery(categoriesQuery);
-            SqlDataReader categoriesReader = categories.ExecuteReader();
-            while (categoriesReader.Read())
-                CategoriesList.Items.Add(categoriesReader.GetValue(0));
+            using (var db = new RentalEntities())
+            {
+                var categories = db.Kategorie.Select(c => c.NazwaKategorii);
+                foreach (var c in categories)
+                    CategoriesList.Items.Add(c);
+            }
         }
-        Queries queries = new Queries();
-        public bool checkToolAvailability(int occurs)
+        public bool CheckToolAvailability(int occurs)
         {
-            String availabilityQuery = "SELECT COUNT(IDnarzedzia) FROM Narzedzia WHERE" +
-            " NazwaNarzedzia = '" + ToolsList.SelectedItem + "' AND Dostepnosc = 1";
-            var availability = queries.ExecuteQuery(availabilityQuery);
-            SqlDataReader availabilityReader = availability.ExecuteReader();
-            availabilityReader.Read();
-            return occurs < int.Parse(availabilityReader.GetValue(0).ToString());
+            using (var db = new RentalEntities())
+            {
+                var toolsNumber = db.Narzedzia.Where(t => t.NazwaNarzedzia ==
+                    ToolsList.SelectedItem.ToString() && t.Dostepnosc == true).Count();
+
+                return occurs < toolsNumber;
+            }
         }
-        public int getLatestLoanId()
+        public int GetLatestLoanId()
         {
-            String loanQuery = "SELECT MAX(IDwypozyczenia) FROM Wypozyczenia";
-            var latestLoan = queries.ExecuteQuery(loanQuery);
-            SqlDataReader loanReader = latestLoan.ExecuteReader();
-            loanReader.Read();
-            return int.Parse(loanReader.GetValue(0).ToString());
+            using (var db = new RentalEntities())
+            {
+                var latestLoan = db.Wypozyczenia.Max(l => l.IDwypozyczenia);
+                return latestLoan;
+            }
         }
-        public void calculateCart()
+        int GetSelectedCategoryDbId()
+        {
+            using (var db = new RentalEntities())
+            {
+                return db.Kategorie.OrderBy(c => c.IDkategorii)
+                    .Skip(CategoriesList.SelectedIndex).FirstOrDefault().IDkategorii;
+            }
+        }
+        public void CalculateCart()
         {
             double priceSumTotal = 0;
             double discountTotal = 0;
@@ -72,14 +81,15 @@ namespace toolsRental
             ToolsList.Items.Clear();
             ToolsList.Enabled = true;
             AddToCartButton.Enabled = false;
-            string categoryId = queries.GetSelectedCategoryDbId(
-                CategoriesList.SelectedIndex.ToString());
-            string toolQuery = "SELECT NazwaNarzedzia FROM Narzedzia WHERE Dostepnosc = 1" +
-            " AND IDkategorii = " + categoryId;
-            var tools = queries.ExecuteQuery(toolQuery);
-            SqlDataReader toolsReader = tools.ExecuteReader();
-            while (toolsReader.Read())
-                ToolsList.Items.Add(toolsReader.GetValue(0));
+            int categoryId = GetSelectedCategoryDbId();
+            using (var db = new RentalEntities())
+            {
+                var tools = db.Narzedzia.Where(t => t.Dostepnosc == true
+                    && t.IDkategorii == categoryId).Select(t => t.NazwaNarzedzia);
+
+                foreach (var t in tools)
+                    ToolsList.Items.Add(t);
+            }
         }
         private void ToolsList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -94,41 +104,39 @@ namespace toolsRental
             foreach(DataGridViewRow row in Cart.Rows)
                 sameToolInCart += row.Cells[0].Value == ToolsList.SelectedItem ? 1 : 0;
 
-            if (checkToolAvailability(sameToolInCart))
+            if (CheckToolAvailability(sameToolInCart))
             {
-                String priceQuery = "SELECT Cena FROM Narzedzia WHERE Dostepnosc" +
-                " = 1 AND NazwaNarzedzia = '" + ToolsList.SelectedItem + "'";
-                var price = queries.ExecuteQuery(priceQuery);
-                SqlDataReader priceReader = price.ExecuteReader();
-                priceReader.Read();
-                Cart.Rows.Add(ToolsList.SelectedItem, priceReader.GetValue(0), 0, "Usuń");
-                Cart.Enabled = true;
-                LoanButton.Enabled = true;
+                using (var db = new RentalEntities())
+                {
+                    var toolPrice = db.Narzedzia.Where(t => t.Dostepnosc == true
+                        && t.NazwaNarzedzia == ToolsList.SelectedItem.ToString()).FirstOrDefault().Cena;
+
+                    Cart.Rows.Add(ToolsList.SelectedItem, toolPrice, 0, "Usuń");
+                    Cart.Enabled = true;
+                    LoanButton.Enabled = true;
+                }
             }
             else
             {
-                ToolsError.SetError(AddToCartButton, "Wszystkie dostępne narzędzia tego" +
-                " typu są już w koszyku!");
+                ToolsError.SetError(AddToCartButton, $"Wszystkie dostępne narzędzia tego " +
+                $"typu są już w koszyku!");
             }
 
-            calculateCart();
+            CalculateCart();
         }
         private void Cart_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (Cart.SelectedCells[0].Value.ToString() == "Usuń")
             {
                 Cart.Rows.RemoveAt(Cart.SelectedCells[0].RowIndex);
-                calculateCart();
+                CalculateCart();
             }
             if (Cart.Rows.Count == 0)
-            {
-                Cart.Enabled = false;
-                LoanButton.Enabled = false;
-            }
+                Cart.Enabled = LoanButton.Enabled = false;
         }
         private void Cart_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            calculateCart();
+            CalculateCart();
         }
         private void LoanButton_Click(object sender, EventArgs e)
         {
@@ -151,63 +159,67 @@ namespace toolsRental
                     }
                 }
             }
-            if (advanceAmount < 0 || advanceAmount > double.Parse(PriceSum.Text))
-            {
-                CartError.SetError(LoanButton, "Wartość zaliczki jest wyższa niż cena koszyka");
-            }
+            double toPay = double.Parse(PriceSum.Text) - double.Parse(DiscountSum.Text);
+            if (advanceAmount < 0 || advanceAmount >= toPay)
+                CartError.SetError(LoanButton, $"Wartość zaliczki jest wyższa lub równa wartości koszyka");
+
             else if (!validDiscount)
             {
-                CartError.SetError(LoanButton, "Wartość rabatu jest" +
-                " nieprawidłowa, podaj wartość od 0 do 99.");
+                CartError.SetError(LoanButton, $"Wartość rabatu jest " +
+                $" nieprawidłowa, podaj wartość od 0 do 99.");
             }
-            else { 
-                string loanQuery = "INSERT INTO Wypozyczenia(IDklienta, DataWypozyczenia, Zaliczka)" +
-                " VALUES (" + selectedUserId + ", CONVERT(date, GETDATE()), " + advanceAmount + ")";
-                var insertLoan = queries.ExecuteQuery(loanQuery);
-                insertLoan.ExecuteNonQuery();
-
-                int loanID = getLatestLoanId();
-                StringBuilder loanNodeValues = new StringBuilder();
-                Dictionary<string, int> toolsDictonary = new Dictionary<string, int>();
-
-                foreach (DataGridViewRow row in Cart.Rows)
+            else
+            {
+                using (var db = new RentalEntities())
                 {
-                    if (toolsDictonary.ContainsKey(row.Cells[0].Value.ToString()))
-                        toolsDictonary[row.Cells[0].Value.ToString()] += 1;
-
-                    else
-                        toolsDictonary.Add(row.Cells[0].Value.ToString(), 1);
-                }
-
-                foreach (KeyValuePair<string, int> tool in toolsDictonary)
-                {
-                    String toolsIdsQuery = "SELECT TOP " + tool.Value + " IDnarzedzia FROM Narzedzia" +
-                    " WHERE Dostepnosc = 1 AND NazwaNarzedzia = '" + tool.Key + "'";
-                    queries.ExecuteQuery(toolsIdsQuery);
-
-                    var toolsIds = queries.ExecuteQuery(toolsIdsQuery);
-                    SqlDataReader toolsIdsReader = toolsIds.ExecuteReader();
-
-                    for (int i = 0; i < tool.Value; i++)
+                    var loan = new Wypozyczenia()
                     {
-                        foreach (DataGridViewRow row in Cart.Rows)
+                        IDklienta = selectedUserId,
+                        DataWypozyczenia = DateTime.Now,
+                        Zaliczka = advanceAmount
+                    };
+                    db.Wypozyczenia.Add(loan);
+                    db.SaveChanges();
+
+                    int loanID = GetLatestLoanId();
+                    StringBuilder loanNodeValues = new StringBuilder();
+                    Dictionary<string, int> toolDuplicates = new Dictionary<string, int>();
+
+                    foreach (DataGridViewRow row in Cart.Rows)
+                    {
+                        if (toolDuplicates.ContainsKey(row.Cells[0].Value.ToString()))
+                            toolDuplicates[row.Cells[0].Value.ToString()] += 1;
+
+                        else
+                            toolDuplicates.Add(row.Cells[0].Value.ToString(), 1);
+                    }
+
+                    foreach (KeyValuePair<string, int> tool in toolDuplicates)
+                    {
+                        var toolsIds = db.Narzedzia.Where(t => t.Dostepnosc == true && t.NazwaNarzedzia
+                            == tool.Key).Take(tool.Value).Select(t => t.IDnarzedzia);
+                        var toolsIdsList = toolsIds.ToList();
+
+                        int currentToolId = 0, cartRowsLength = Cart.Rows.Count;
+                        for (int i = 0; i < cartRowsLength; i++)
                         {
-                            if (row.Cells[0].Value.ToString() == tool.Key)
+                            if (Cart.Rows[i].Cells[0].Value.ToString() == tool.Key)
                             {
-                                toolsIdsReader.Read();
-                                double discountValue = double.Parse(row.Cells[2].Value.ToString()) / 100;
-                                loanNodeValues.Append("(" + loanID + ", " + toolsIdsReader.GetValue(0)
-                                + ", " + discountValue + "),");
+                                DataGridViewRow row = Cart.Rows[i];
+                                var loanEntity = new PozycjeWypozyczenia()
+                                {
+                                    IDwypozyczenia = loanID,
+                                    IDnarzedzia = toolsIdsList[currentToolId],
+                                    Rabat = double.Parse(row.Cells[2].Value.ToString()) / 100
+                                };
+                                db.PozycjeWypozyczenia.Add(loanEntity);
+                                currentToolId++;
                             }
                         }
                     }
+                    db.SaveChanges();
+                    Close();
                 }
-                loanNodeValues.Remove(loanNodeValues.Length - 1, 1);
-                string loanNodesQuery = "INSERT INTO PozycjeWypozyczenia" +
-                " (IDwypozyczenia, IDnarzedzia, Rabat) VALUES" + loanNodeValues;
-                var insertLoanNodes = queries.ExecuteQuery(loanNodesQuery);
-                insertLoanNodes.ExecuteNonQuery();
-                Close();
             }   
         }
     }

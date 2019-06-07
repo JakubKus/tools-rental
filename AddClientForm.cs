@@ -10,7 +10,6 @@ namespace toolsRental
         {
             InitializeComponent();
         }
-        Queries queries = new Queries();
         private bool CheckNameBox()
         {
             return FirstNameBox.Text.Length > 2
@@ -29,11 +28,17 @@ namespace toolsRental
         }
         private void AddClientButton_Click(object sender, EventArgs e)
         {
-            string addClientQuery = "INSERT INTO Klienci (Imie, Nazwisko) VALUES" +
-            " ('" + FirstNameBox.Text + "', '" + LastNameBox.Text + "')";
-            var addClient = queries.ExecuteQuery(addClientQuery);
-            addClient.ExecuteNonQuery();
-            Close();
+            using (var db = new RentalEntities())
+            {
+                var client = new Klienci()
+                {
+                    Imie = FirstNameBox.Text,
+                    Nazwisko = LastNameBox.Text
+                };
+                db.Klienci.Add(client);
+                db.SaveChanges();
+                Close();
+            }
         }
     }
 }

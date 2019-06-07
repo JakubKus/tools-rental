@@ -126,6 +126,7 @@
             // 
             this.RemoveClientButton.AutoSize = true;
             this.RemoveClientButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.RemoveClientButton.Enabled = false;
             this.RemoveClientButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.RemoveClientButton.Location = new System.Drawing.Point(15, 125);
             this.RemoveClientButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 0);

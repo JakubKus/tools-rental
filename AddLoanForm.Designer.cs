@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.CategoriesList = new System.Windows.Forms.ComboBox();
@@ -256,6 +256,11 @@
             0,
             0});
             this.AdvanceAmount.Location = new System.Drawing.Point(89, 10);
+            this.AdvanceAmount.Maximum = new decimal(new int[] {
+            13500,
+            0,
+            0,
+            0});
             this.AdvanceAmount.Name = "AdvanceAmount";
             this.AdvanceAmount.Size = new System.Drawing.Size(44, 23);
             this.AdvanceAmount.TabIndex = 6;
@@ -283,8 +288,8 @@
             this.Cart.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.Cart.RowHeadersVisible = false;
             this.Cart.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.Cart.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.Cart.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.Cart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.Cart.Size = new System.Drawing.Size(270, 108);
             this.Cart.TabIndex = 5;
@@ -302,9 +307,9 @@
             // 
             // Price
             // 
-            dataGridViewCellStyle1.Format = "N2";
-            dataGridViewCellStyle1.NullValue = null;
-            this.Price.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Format = "N2";
+            dataGridViewCellStyle4.NullValue = null;
+            this.Price.DefaultCellStyle = dataGridViewCellStyle4;
             this.Price.HeaderText = "Cena(zł)";
             this.Price.Name = "Price";
             this.Price.ReadOnly = true;
@@ -313,9 +318,9 @@
             // 
             // Discount
             // 
-            dataGridViewCellStyle2.Format = "N0";
-            dataGridViewCellStyle2.NullValue = "0";
-            this.Discount.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Format = "N0";
+            dataGridViewCellStyle5.NullValue = "0";
+            this.Discount.DefaultCellStyle = dataGridViewCellStyle5;
             this.Discount.HeaderText = "Rabat(%)";
             this.Discount.MaxInputLength = 2;
             this.Discount.Name = "Discount";
